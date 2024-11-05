@@ -9,18 +9,18 @@ import javafx.stage.Stage;
 
 public class App extends Application {
 
-    @Override
-    public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
-        Scene scene = new Scene(root);
-        stage.setTitle("Difase - Inicio de Sesión");
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
-    }
+  @Override
+  public void start(Stage stage) throws IOException {
+    Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
+    Scene scene = new Scene(root);
+    stage.setTitle("Difase - Inicio de Sesión");
+    stage.setScene(scene);
+    stage.setResizable(false);
+    stage.show();
+  }
 
-    public static void main(String[] args) {
-        launch();
-    }
+  public static void main(String[] args) {
+    launch();
+  }
 
 }

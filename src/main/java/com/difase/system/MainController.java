@@ -63,7 +63,7 @@ public class MainController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle rb) {
-    cargarNumeroCotizacion();  // Cargar el número de cotización al iniciar
+    cargarNumeroCotizacion(); // Cargar el número de cotización al iniciar
     mostrarCodigoCotizacion(); // Mostrar el código de cotización en el Label
     addRow();
     addImageRow();
@@ -113,8 +113,7 @@ public class MainController implements Initializable {
     newImageRow.getChildren().addAll(
         new HBox(imageNumberField, chooseImageButton, deleteImageButton),
         imageTitleField,
-        previewImageView
-    );
+        previewImageView);
 
     imagesContainer.getChildren().add(newImageRow);
   }
@@ -224,8 +223,10 @@ public class MainController implements Initializable {
     newTotal.setPrefWidth(80);
     newTotal.setMaxHeight(Double.MAX_VALUE);
 
-    newQuantity.textProperty().addListener((observable, oldValue, newValue) -> updateRowTotal(newQuantity, newUnitPrice, newTotal));
-    newUnitPrice.textProperty().addListener((observable, oldValue, newValue) -> updateRowTotal(newQuantity, newUnitPrice, newTotal));
+    newQuantity.textProperty()
+        .addListener((observable, oldValue, newValue) -> updateRowTotal(newQuantity, newUnitPrice, newTotal));
+    newUnitPrice.textProperty()
+        .addListener((observable, oldValue, newValue) -> updateRowTotal(newQuantity, newUnitPrice, newTotal));
 
     Button deleteButton = new Button("");
     deleteButton.setPrefWidth(25);
@@ -244,7 +245,7 @@ public class MainController implements Initializable {
 
   private void mostrarCodigoCotizacion() {
     String codigoCotizacion = generarCodigoCotizacion();
-    CodigoCOT.setText(codigoCotizacion);  // Muestra el código en el Label
+    CodigoCOT.setText(codigoCotizacion); // Muestra el código en el Label
   }
 
   @FXML
@@ -282,7 +283,7 @@ public class MainController implements Initializable {
         VBox vbox = (VBox) imageRow;
         ImageView imageView = (ImageView) vbox.getChildren().get(2);
         if (imageView.getImage() != null) {
-          String imagePath = imageView.getImage().getUrl().substring(5);  // Obtén la ruta del archivo
+          String imagePath = imageView.getImage().getUrl().substring(5); // Obtén la ruta del archivo
           String imageNumber = ((TextField) ((HBox) vbox.getChildren().get(0)).getChildren().get(0)).getText();
           String imageTitle = ((TextField) vbox.getChildren().get(1)).getText();
 
@@ -307,8 +308,7 @@ public class MainController implements Initializable {
         totalGeneral,
         codigoCotizacion,
         detallesFilas,
-        imagesData
-    );
+        imagesData);
 
     cotizacionNumero++;
     guardarNumeroCotizacion();
@@ -376,8 +376,7 @@ public class MainController implements Initializable {
         totalGeneral,
         codigoCotizacion,
         detallesFilas,
-        imagesData
-    );
+        imagesData);
 
     // Abrir el PDF temporal para vista previa
     abrirPdfTemporal(nombreArchivoPdfTemporal);

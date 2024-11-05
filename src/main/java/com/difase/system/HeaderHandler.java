@@ -31,7 +31,8 @@ public class HeaderHandler implements IEventHandler {
   public void handleEvent(Event event) {
     PdfDocumentEvent docEvent = (PdfDocumentEvent) event;
     PdfDocument pdfDoc = docEvent.getDocument();
-    PdfCanvas pdfCanvas = new PdfCanvas(docEvent.getPage().newContentStreamBefore(), docEvent.getPage().getResources(), pdfDoc);
+    PdfCanvas pdfCanvas = new PdfCanvas(docEvent.getPage().newContentStreamBefore(), docEvent.getPage().getResources(),
+        pdfDoc);
 
     // Add logo image
     ImageData imageData = null;
@@ -75,7 +76,7 @@ public class HeaderHandler implements IEventHandler {
     pdfCanvas.moveText(textXLinea1, textY);
     pdfCanvas.showText(linea1);
 
-    pdfCanvas.moveText(textXLinea2 - textXLinea1, - 15); // Move down for second line
+    pdfCanvas.moveText(textXLinea2 - textXLinea1, -15); // Move down for second line
     pdfCanvas.showText(linea2);
     pdfCanvas.endText();
 
