@@ -26,16 +26,16 @@ import java.util.List;
 import java.util.Map;
 
 public class PdfGenerator {
-  
+
   private static final String FONT_PATH = "/fuentes/LSANS.woff";
 
-  public void generateInvoice(String nombreArchivoPdf, String sres, String atencion, String contacto, String referencia,
+  public void generateInvoice(String fullPath, String sres, String atencion, String contacto, String referencia,
       String totalGeneral, String codigoCotizacion, List<Map<String, Object>> detallesFilas,
       List<Map<String, String>> imagesData) {
     try {
-      PdfWriter writer = new PdfWriter(nombreArchivoPdf);
+      PdfWriter writer = new PdfWriter(fullPath);
       PdfDocument pdf = new PdfDocument(writer);
-      
+
       PdfFont customFont = loadFont();
 
       HeaderHandler headerHandler = new HeaderHandler(codigoCotizacion, customFont);
@@ -78,29 +78,29 @@ public class PdfGenerator {
         }
       }
 
-      System.out.println("PDF generado con éxito en " + nombreArchivoPdf);
+      System.out.println("PDF generado con éxito en " + fullPath);
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
-  
+
   private static PdfFont loadFont() throws IOException {
-  // Cargar la fuente desde el archivo dentro de resources usando InputStream
-  try (InputStream fontStream = BodyHandler.class.getResourceAsStream(FONT_PATH)) {
-    if (fontStream == null) {
-      throw new IOException("No se pudo encontrar el archivo de fuente en la ruta: " + FONT_PATH);
+    // Cargar la fuente desde el archivo dentro de resources usando InputStream
+    try (InputStream fontStream = BodyHandler.class.getResourceAsStream(FONT_PATH)) {
+      if (fontStream == null) {
+        throw new IOException("No se pudo encontrar el archivo de fuente en la ruta: " + FONT_PATH);
+      }
+
+      // Convertir el InputStream a un byte[]
+      byte[] fontBytes = convertInputStreamToByteArray(fontStream);
+
+      // Crear el FontProgram a partir del byte[]
+      FontProgram fontProgram = FontProgramFactory.createFont(fontBytes);
+
+      // Crear el PdfFont usando el FontProgram
+      return PdfFontFactory.createFont(fontProgram);
     }
-    
-    // Convertir el InputStream a un byte[]
-    byte[] fontBytes = convertInputStreamToByteArray(fontStream);
-    
-    // Crear el FontProgram a partir del byte[]
-    FontProgram fontProgram = FontProgramFactory.createFont(fontBytes);
-    
-    // Crear el PdfFont usando el FontProgram
-    return PdfFontFactory.createFont(fontProgram);
   }
-}
 
   private static byte[] convertInputStreamToByteArray(InputStream inputStream) throws IOException {
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
