@@ -1,5 +1,8 @@
 package com.difase.system;
 
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.FontProgramFactory;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -15,19 +18,20 @@ import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
 public class BodyHandler {
 
-  private static final String FONT_PATH = "src/main/java/recursos/LSANS.woff";
+  private static final String FONT_PATH = "/fuentes/LSANS.woff";
   private static final int FONT_SIZE = 10;
   private static final DeviceRgb TEXT_COLOR = new DeviceRgb(7, 55, 99);
 
   public static void addBody(Document document, String sres, String atencion, String contacto, String referencia,
       List<Map<String, Object>> detallesFilas, String totalGeneral) throws IOException {
-    PdfFont customFont = PdfFontFactory.createFont(FONT_PATH);
-    Table table = new Table(UnitValue.createPercentArray(new float[] { 17, 2, 100 }))
+    PdfFont customFont = loadFont();
+    Table table = new Table(UnitValue.createPercentArray(new float[]{17, 2, 100}))
         .setWidth(UnitValue.createPercentValue(100))
         .setMarginTop(-5)
         .setPadding(0);
@@ -76,6 +80,36 @@ public class BodyHandler {
 
   }
 
+private static PdfFont loadFont() throws IOException {
+  // Cargar la fuente desde el archivo dentro de resources usando InputStream
+  try (InputStream fontStream = BodyHandler.class.getResourceAsStream(FONT_PATH)) {
+    if (fontStream == null) {
+      throw new IOException("No se pudo encontrar el archivo de fuente en la ruta: " + FONT_PATH);
+    }
+    
+    // Convertir el InputStream a un byte[]
+    byte[] fontBytes = convertInputStreamToByteArray(fontStream);
+    
+    // Crear el FontProgram a partir del byte[]
+    FontProgram fontProgram = FontProgramFactory.createFont(fontBytes);
+    
+    // Crear el PdfFont usando el FontProgram
+    return PdfFontFactory.createFont(fontProgram);
+  }
+}
+
+  private static byte[] convertInputStreamToByteArray(InputStream inputStream) throws IOException {
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    byte[] buffer = new byte[1024];
+    int bytesRead;
+
+    while ((bytesRead = inputStream.read(buffer)) != -1) {
+      byteArrayOutputStream.write(buffer, 0, bytesRead);
+    }
+
+    return byteArrayOutputStream.toByteArray();
+  }
+
   private static void addRow(Table table, String label, String value, PdfFont customFont) {
     // Define the desired height for the cells
     float cellHeight = 15f; // Adjust this value to set the desired height
@@ -121,7 +155,7 @@ public class BodyHandler {
   private static void addDetailsTable(Document document, List<Map<String, Object>> detallesFilas,
       String totalGeneral,
       PdfFont customFont) {
-    Table detailsTable = new Table(UnitValue.createPercentArray(new float[] { 11, 2, 2, 2 }))
+    Table detailsTable = new Table(UnitValue.createPercentArray(new float[]{11, 2, 2, 2}))
         .setWidth(UnitValue.createPercentValue(100))
         .setMarginTop(10);
 
@@ -161,7 +195,7 @@ public class BodyHandler {
   }
 
   private static void addConditionsTable(Document document, PdfFont customFont) {
-    Table conditionsTable = new Table(UnitValue.createPercentArray(new float[] { 5, 5 }))
+    Table conditionsTable = new Table(UnitValue.createPercentArray(new float[]{5, 5}))
         .setWidth(UnitValue.createPercentValue(100)).setMarginLeft(5).setPadding(0)
         .setBorder(null);
 
@@ -194,7 +228,7 @@ public class BodyHandler {
     Table footerTable = new Table(1).setMarginTop(15).setPadding(0).setFontColor(TEXT_COLOR)
         .setWidth(UnitValue.createPercentValue(28)) // Establece el ancho al 70% del documento
         .setHorizontalAlignment(HorizontalAlignment.LEFT); // Centrar el contenedor en el
-                                                           // documento
+    // documento
 
     // ATTE.
     Paragraph atteParagraph = new Paragraph("ATTE.").setFontColor(new DeviceRgb(0, 0, 0))
@@ -230,7 +264,7 @@ public class BodyHandler {
         .setBorder(null));
 
     // Teléfono
-    Table phoneTable = new Table(new float[] { 1, 1 })
+    Table phoneTable = new Table(new float[]{1, 1})
         .setWidth(UnitValue.createPercentValue(100))
         .setBorder(null);
     phoneTable.addCell(
@@ -246,7 +280,7 @@ public class BodyHandler {
         .setBorder(null));
 
     // Web con Link
-    Table webTable = new Table(new float[] { 1, 1 })
+    Table webTable = new Table(new float[]{1, 1})
         .setWidth(UnitValue.createPercentValue(100)).setMargin(0).setPadding(0)
         .setBorder(null);
     webTable.addCell(
@@ -263,7 +297,7 @@ public class BodyHandler {
     footerTable.addCell(new Cell().add(webTable).setMargin(0).setPadding(0)
         .setBorder(null));
 
-    Table emailTable = new Table(new float[] { 1, 3 })
+    Table emailTable = new Table(new float[]{1, 3})
         .setWidth(UnitValue.createPercentValue(100)).setMargin(0).setPadding(0)
         .setBorder(null);
     emailTable.addCell(

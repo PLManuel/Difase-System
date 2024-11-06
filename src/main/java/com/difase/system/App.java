@@ -11,16 +11,11 @@ public class App extends Application {
 
   @Override
   public void start(Stage stage) throws IOException {
-    Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
+    Parent root = FXMLLoader.load(getClass().getResource("/com/difase/system/Layout.fxml"));
     Scene scene = new Scene(root);
     stage.setTitle("Difase - Inicio de Sesión");
     stage.setScene(scene);
     stage.setResizable(false);
     stage.show();
   }
-
-  public static void main(String[] args) {
-    launch();
-  }
-
 }

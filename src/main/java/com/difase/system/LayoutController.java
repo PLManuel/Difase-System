@@ -5,7 +5,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,13 +29,15 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
-public class MainController implements Initializable {
+public class LayoutController implements Initializable {
 
-  private static final String CONFIG_FILE = "config.properties";
+  private static final String CONFIG_FILE_INTERNAL = "/config.properties";
+  private static final String CONFIG_FILE_EXTERNAL = "config.properties";
   private int cotizacionNumero;
 
   @FXML
@@ -63,11 +69,28 @@ public class MainController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle rb) {
-    cargarNumeroCotizacion(); // Cargar el número de cotización al iniciar
-    mostrarCodigoCotizacion(); // Mostrar el código de cotización en el Label
+    verificarOCrearConfigExterno();
+    cargarNumeroCotizacion();
+    mostrarCodigoCotizacion();
     addRow();
     addImageRow();
     updateTotal();
+  }
+
+  private void verificarOCrearConfigExterno() {
+    Path externalConfigPath = Paths.get(CONFIG_FILE_EXTERNAL);
+    if (!Files.exists(externalConfigPath)) {
+      try (InputStream input = getClass().getResourceAsStream(CONFIG_FILE_INTERNAL)) {
+        if (input != null) {
+          Files.copy(input, externalConfigPath);
+          System.out.println("Archivo config.properties copiado a la ubicación externa.");
+        } else {
+          System.out.println("No se pudo encontrar el archivo interno config.properties.");
+        }
+      } catch (IOException e) {
+        System.out.println("Error al copiar config.properties al directorio externo: " + e.getMessage());
+      }
+    }
   }
 
   @FXML
@@ -87,7 +110,7 @@ public class MainController implements Initializable {
     previewImageView.setFitWidth(400);
     previewImageView.setPreserveRatio(true);
 
-    chooseImageButton.setOnAction(event -> {
+    chooseImageButton.setOnAction(_ -> {
       FileChooser fileChooser = new FileChooser();
       fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg"));
       File selectedFile = fileChooser.showOpenDialog(chooseImageButton.getScene().getWindow());
@@ -105,7 +128,7 @@ public class MainController implements Initializable {
 
     Button deleteImageButton = new Button("Eliminar");
     deleteImageButton.setPrefWidth(100);
-    deleteImageButton.setOnAction(event -> {
+    deleteImageButton.setOnAction(_ -> {
       imagesContainer.getChildren().remove(newImageRow);
       updateImageNumbers();
     });
@@ -131,11 +154,11 @@ public class MainController implements Initializable {
 
   private void cargarNumeroCotizacion() {
     Properties props = new Properties();
-    try (FileInputStream in = new FileInputStream(CONFIG_FILE)) {
-      props.load(in);
+    try (FileInputStream input = new FileInputStream(CONFIG_FILE_EXTERNAL)) {
+      props.load(input);
       cotizacionNumero = Integer.parseInt(props.getProperty("cotizacion.numero", "1"));
     } catch (IOException e) {
-      e.printStackTrace();
+      System.out.println("No se pudo cargar el archivo de configuración externo: " + CONFIG_FILE_EXTERNAL);
       cotizacionNumero = 1;
     }
   }
@@ -143,9 +166,10 @@ public class MainController implements Initializable {
   private void guardarNumeroCotizacion() {
     Properties props = new Properties();
     props.setProperty("cotizacion.numero", String.valueOf(cotizacionNumero));
-    try (FileOutputStream out = new FileOutputStream(CONFIG_FILE)) {
-      props.store(out, "Configuración de cotización");
+    try (FileOutputStream out = new FileOutputStream(CONFIG_FILE_EXTERNAL)) {
+      props.store(out, "Actualización de configuración de cotización");
     } catch (IOException e) {
+      System.out.println("No se pudo escribir en el archivo de configuración externo: " + CONFIG_FILE_EXTERNAL);
       e.printStackTrace();
     }
   }
@@ -153,32 +177,6 @@ public class MainController implements Initializable {
   private String generarCodigoCotizacion() {
     int year = Year.now().getValue() % 100;
     return String.format("DFM-%d-%02d", cotizacionNumero, year);
-  }
-
-  private void updateTotal() {
-    double totalSum = 0;
-    for (Node row : rowsContainer.getChildren()) {
-      if (row instanceof HBox && row != totalRow) {
-        TextField rowTotal = (TextField) ((HBox) row).getChildren().get(3);
-        try {
-          totalSum += Double.parseDouble(rowTotal.getText());
-        } catch (NumberFormatException e) {
-
-        }
-      }
-    }
-    totalAmount.setText(String.valueOf(totalSum));
-  }
-
-  private void updateRowTotal(TextField quantity, TextField unitPrice, TextField total) {
-    try {
-      double qty = Double.parseDouble(quantity.getText());
-      double price = Double.parseDouble(unitPrice.getText());
-      total.setText(String.valueOf(qty * price));
-    } catch (NumberFormatException e) {
-      total.setText("0");
-    }
-    updateTotal();
   }
 
   private void setupDynamicHeight(TextArea textArea) {
@@ -191,53 +189,138 @@ public class MainController implements Initializable {
           return textArea.getFont().getSize() + text.getBoundsInLocal().getHeight();
         }, text.boundsInLocalProperty()));
 
-        text.boundsInLocalProperty().addListener((observable, oldBounds, newBounds) -> {
+        text.boundsInLocalProperty().addListener((_, _, _) -> {
           Platform.runLater(textArea::requestLayout);
         });
       }
     });
   }
 
+  // Método para permitir solo números enteros y mostrar siempre 2 dígitos en el campo cantidad
+  private void SoloNumerosEnteros(KeyEvent keyEvent, TextField textField) {
+    try {
+      char key = keyEvent.getCharacter().charAt(0);
+      if (!Character.isDigit(key)) {
+        keyEvent.consume();
+      }
+    } catch (Exception e) {
+    }
+  }
+
+// Método para permitir solo números con hasta 2 decimales (para precio unitario y total)
+  private void SoloNumerosConDecimales(KeyEvent keyEvent) {
+    try {
+      char key = keyEvent.getCharacter().charAt(0);
+      TextField source = (TextField) keyEvent.getSource();
+      String currentText = source.getText();
+
+      // Solo permite números y un punto decimal
+      if (!Character.isDigit(key) && key != '.') {
+        keyEvent.consume();
+      }
+
+      // Si ya hay un punto decimal, evitar insertar más puntos
+      if (currentText.contains(".") && key == '.') {
+        keyEvent.consume();
+      }
+
+      // Limitar la cantidad de decimales a 2
+      if (currentText.contains(".") && currentText.split("\\.")[1].length() >= 2) {
+        keyEvent.consume(); // No permitir más de dos decimales
+      }
+    } catch (Exception e) {
+    }
+  }
+
+// Actualizar el total por fila (tanto en cantidad como precio unitario)
+  private void updateRowTotal(TextField quantityField, TextField unitPriceField, TextField totalField) {
+    try {
+      // Obtener la cantidad, precio unitario y calcular el total
+      int quantity = Integer.parseInt(quantityField.getText());
+      double unitPrice = Double.parseDouble(unitPriceField.getText());
+      double total = quantity * unitPrice;
+
+      // Actualizar el campo total con 2 decimales
+      totalField.setText(String.format("%.2f", total));
+      updateTotal();
+    } catch (NumberFormatException e) {
+      totalField.setText("0.00"); // Si hay un error en el formato, establecer 0.00
+    }
+  }
+
+// Actualizar el total general sumando los valores de los rowTotal
+  private void updateTotal() {
+    double totalSum = 0;
+    for (Node row : rowsContainer.getChildren()) {
+      if (row instanceof HBox && row != totalRow) {
+        TextField rowTotal = (TextField) ((HBox) row).getChildren().get(3); // Acceder al campo total
+        try {
+          totalSum += Double.parseDouble(rowTotal.getText());
+        } catch (NumberFormatException e) {
+          // Ignorar si hay un error en la conversión
+        }
+      }
+    }
+
+    // Actualizar el campo total con 2 decimales
+    totalAmount.setText(String.format("%.2f", totalSum));
+  }
+
+// Método para agregar nuevas filas con validación y cálculo automático
   @FXML
   private void addRow() {
     HBox newRow = new HBox();
     newRow.setPrefWidth(695.0);
     newRow.setMinHeight(50.0);
 
+    // Descripción (sin cambios)
     TextArea newDescription = new TextArea();
     newDescription.setPrefWidth(430);
     newDescription.setMaxHeight(Double.MAX_VALUE);
     newDescription.setWrapText(true);
-
     setupDynamicHeight(newDescription);
 
+    // Cantidad (solo números enteros, con 2 dígitos)
     TextField newQuantity = new TextField();
     newQuantity.setPrefWidth(80);
     newQuantity.setMaxHeight(Double.MAX_VALUE);
 
+    // Validación para que solo se permitan números enteros
+    newQuantity.addEventHandler(KeyEvent.KEY_TYPED, event -> SoloNumerosEnteros(event, newQuantity));
+
+    // Precio Unitario (números con hasta 2 decimales)
     TextField newUnitPrice = new TextField();
     newUnitPrice.setPrefWidth(80);
     newUnitPrice.setMaxHeight(Double.MAX_VALUE);
 
+    // Validación para que solo se permitan números con hasta 2 decimales
+    newUnitPrice.addEventHandler(KeyEvent.KEY_TYPED, event -> SoloNumerosConDecimales(event));
+
+    // Total (números con hasta 2 decimales, igual que precio unitario)
     TextField newTotal = new TextField();
     newTotal.setPrefWidth(80);
     newTotal.setMaxHeight(Double.MAX_VALUE);
 
-    newQuantity.textProperty()
-        .addListener((observable, oldValue, newValue) -> updateRowTotal(newQuantity, newUnitPrice, newTotal));
-    newUnitPrice.textProperty()
-        .addListener((observable, oldValue, newValue) -> updateRowTotal(newQuantity, newUnitPrice, newTotal));
+    // Usar el mismo TextFormatter que para precio unitario
+    newTotal.addEventHandler(KeyEvent.KEY_TYPED, event -> SoloNumerosConDecimales(event));
 
+    // Actualizar el total cuando cambian los valores
+    newQuantity.textProperty().addListener((_, _, _) -> updateRowTotal(newQuantity, newUnitPrice, newTotal));
+    newUnitPrice.textProperty().addListener((_, _, _) -> updateRowTotal(newQuantity, newUnitPrice, newTotal));
+
+    // Botón de eliminar
     Button deleteButton = new Button("");
     deleteButton.setPrefWidth(25);
     deleteButton.setMaxHeight(Double.MAX_VALUE);
-    deleteButton.setOnAction(event -> {
+    deleteButton.setOnAction(_ -> {
       rowsContainer.getChildren().remove(newRow);
       updateTotal();
     });
 
+    // Añadir los elementos a la fila
     newRow.getChildren().addAll(newDescription, newQuantity, newUnitPrice, newTotal, deleteButton);
 
+    // Añadir la fila al contenedor
     rowsContainer.getChildren().add(rowsContainer.getChildren().size() - 1, newRow);
 
     updateTotal();
@@ -245,7 +328,7 @@ public class MainController implements Initializable {
 
   private void mostrarCodigoCotizacion() {
     String codigoCotizacion = generarCodigoCotizacion();
-    CodigoCOT.setText(codigoCotizacion); // Muestra el código en el Label
+    CodigoCOT.setText(codigoCotizacion);
   }
 
   @FXML
@@ -283,7 +366,7 @@ public class MainController implements Initializable {
         VBox vbox = (VBox) imageRow;
         ImageView imageView = (ImageView) vbox.getChildren().get(2);
         if (imageView.getImage() != null) {
-          String imagePath = imageView.getImage().getUrl().substring(5); // Obtén la ruta del archivo
+          String imagePath = imageView.getImage().getUrl().substring(5);
           String imageNumber = ((TextField) ((HBox) vbox.getChildren().get(0)).getChildren().get(0)).getText();
           String imageTitle = ((TextField) vbox.getChildren().get(1)).getText();
 
@@ -317,7 +400,6 @@ public class MainController implements Initializable {
 
   @FXML
   private void vistaPreviaPdf() throws IOException {
-    // Generar una versión temporal del PDF sin afectar el contador
     String codigoCotizacion = generarCodigoCotizacion();
     String nombreArchivoPdfTemporal = "vista-previa-" + codigoCotizacion + ".pdf";
 
@@ -378,7 +460,6 @@ public class MainController implements Initializable {
         detallesFilas,
         imagesData);
 
-    // Abrir el PDF temporal para vista previa
     abrirPdfTemporal(nombreArchivoPdfTemporal);
   }
 

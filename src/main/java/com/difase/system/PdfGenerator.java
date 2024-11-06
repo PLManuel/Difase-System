@@ -1,8 +1,12 @@
 package com.difase.system;
 
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -11,16 +15,19 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
 public class PdfGenerator {
+  
+  private static final String FONT_PATH = "/fuentes/LSANS.woff";
 
   public void generateInvoice(String nombreArchivoPdf, String sres, String atencion, String contacto, String referencia,
       String totalGeneral, String codigoCotizacion, List<Map<String, Object>> detallesFilas,
@@ -28,8 +35,10 @@ public class PdfGenerator {
     try {
       PdfWriter writer = new PdfWriter(nombreArchivoPdf);
       PdfDocument pdf = new PdfDocument(writer);
+      
+      PdfFont customFont = loadFont();
 
-      HeaderHandler headerHandler = new HeaderHandler(codigoCotizacion);
+      HeaderHandler headerHandler = new HeaderHandler(codigoCotizacion, customFont);
       pdf.addEventHandler(PdfDocumentEvent.END_PAGE, headerHandler);
 
       FooterHandler footerHandler = new FooterHandler();
@@ -37,11 +46,7 @@ public class PdfGenerator {
 
       try (Document document = new Document(pdf, PageSize.A4, false)) {
         document.setMargins(85, 84, 47, 84);
-        String fontPath = "src/main/java/recursos/LSANS.woff";
-        FontProvider fontProvider = new FontProvider();
-        fontProvider.addFont(fontPath);
-        document.setFontProvider(fontProvider);
-        document.setFont(PdfFontFactory.createFont(fontPath));
+        document.setFont(customFont);
 
         BodyHandler.addBody(document, sres, atencion, contacto, referencia, detallesFilas, totalGeneral);
 
@@ -77,5 +82,35 @@ public class PdfGenerator {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+  
+  private static PdfFont loadFont() throws IOException {
+  // Cargar la fuente desde el archivo dentro de resources usando InputStream
+  try (InputStream fontStream = BodyHandler.class.getResourceAsStream(FONT_PATH)) {
+    if (fontStream == null) {
+      throw new IOException("No se pudo encontrar el archivo de fuente en la ruta: " + FONT_PATH);
+    }
+    
+    // Convertir el InputStream a un byte[]
+    byte[] fontBytes = convertInputStreamToByteArray(fontStream);
+    
+    // Crear el FontProgram a partir del byte[]
+    FontProgram fontProgram = FontProgramFactory.createFont(fontBytes);
+    
+    // Crear el PdfFont usando el FontProgram
+    return PdfFontFactory.createFont(fontProgram);
+  }
+}
+
+  private static byte[] convertInputStreamToByteArray(InputStream inputStream) throws IOException {
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    byte[] buffer = new byte[1024];
+    int bytesRead;
+
+    while ((bytesRead = inputStream.read(buffer)) != -1) {
+      byteArrayOutputStream.write(buffer, 0, bytesRead);
+    }
+
+    return byteArrayOutputStream.toByteArray();
   }
 }
