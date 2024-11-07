@@ -5,25 +5,55 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.difase.system.LayoutController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+  minWidth="-Infinity" prefHeight="640.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/23.0.1"
+  xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.difase.system.LayoutController">
   <children>
-    <Pane prefHeight="640.0" prefWidth="240.0" style="-fx-background-color: #136295;" />
+    <Pane prefHeight="640.0" prefWidth="240.0" style="-fx-background-color: #136295;">
+      <children>
+        <Button styleClass="nav-item" layoutY="80.0" mnemonicParsing="false"
+          prefHeight="80.0" prefWidth="240.0" text="COTIZACIONES" textFill="WHITE">
+          <font>
+            <Font name="Roboto Black" size="18.0" />
+          </font>
+        </Button>
+        <Button styleClass="nav-item" layoutY="170.0" mnemonicParsing="false" prefHeight="80.0"
+          prefWidth="240.0" textFill="WHITE">
+          <font>
+            <Font name="Roboto Black" size="18.0" />
+          </font>
+        </Button>
+        <Button styleClass="nav-item" layoutY="260.0" mnemonicParsing="false" prefHeight="80.0"
+          prefWidth="240.0" textFill="WHITE">
+          <font>
+            <Font name="Roboto Black" size="18.0" />
+          </font>
+        </Button>
+      </children>
+    </Pane>
     <Pane layoutX="240.0" prefHeight="80.0" prefWidth="840.0" style="-fx-background-color: #136295;">
       <children>
-        <Button fx:id="generatePDF" layoutX="14.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleGeneratePdf" prefHeight="50.0" prefWidth="100.0" text="Generar PDF" />
-        <Label fx:id="CodigoCOT" layoutX="702.0" layoutY="23.0" prefHeight="35.0" prefWidth="124.0" textFill="WHITE">
+        <Button fx:id="generatePDF" layoutX="14.0" layoutY="15.0" mnemonicParsing="false"
+          onAction="#handleGeneratePdf" prefHeight="50.0" prefWidth="100.0" text="Generar PDF" />
+        <Label fx:id="CodigoCOT" layoutX="702.0" layoutY="23.0" prefHeight="35.0" prefWidth="124.0"
+          textFill="WHITE">
           <font>
             <Font name="System Bold" size="15.0" />
           </font>
         </Label>
-        <Button fx:id="vistaPreviaPdfButton" onAction="#vistaPreviaPdf"  layoutX="133.0" layoutY="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="100.0" text="Ver PDF" />
-        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="544.0" layoutY="23.0" prefHeight="35.0" prefWidth="154.0" text="Codigo de Cotizacion:" textAlignment="JUSTIFY" textFill="WHITE">
+        <Button fx:id="vistaPreviaPdfButton" layoutX="133.0" layoutY="15.0" mnemonicParsing="false"
+          onAction="#vistaPreviaPdf" prefHeight="50.0" prefWidth="100.0" text="Ver PDF" />
+        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="544.0" layoutY="23.0"
+          prefHeight="35.0" prefWidth="154.0" text="Codigo de Cotizacion:" textAlignment="JUSTIFY"
+          textFill="WHITE">
           <font>
             <Font size="15.0" />
           </font>
@@ -47,20 +77,27 @@
                         <Label layoutX="15.0" layoutY="45.0" text="Atención" />
                         <Label layoutX="15.0" layoutY="75.0" text="Contacto" />
                         <Label layoutX="15.0" layoutY="105.0" text="Referencia" />
-                        <TextField fx:id="sresField" layoutX="95.0" layoutY="10.0" prefHeight="25.0" prefWidth="590.0" />
-                        <TextField fx:id="atencionField" layoutX="95.0" layoutY="40.0" prefHeight="25.0" prefWidth="590.0" />
-                        <TextField fx:id="contactoField" layoutX="95.0" layoutY="70.0" prefHeight="25.0" prefWidth="590.0" />
-                        <TextField fx:id="referenciaField" layoutX="95.0" layoutY="100.0" prefHeight="25.0" prefWidth="590.0" />
+                        <TextField fx:id="sresField" layoutX="95.0" layoutY="10.0" prefHeight="25.0"
+                          prefWidth="590.0" styleClass="cell-style" />
+                        <TextField fx:id="atencionField" layoutX="95.0" layoutY="40.0"
+                          prefHeight="25.0" prefWidth="590.0" styleClass="cell-style" />
+                        <TextField fx:id="contactoField" layoutX="95.0" layoutY="70.0"
+                          prefHeight="25.0" prefWidth="590.0" styleClass="cell-style" />
+                        <TextField fx:id="referenciaField" layoutX="95.0" layoutY="100.0"
+                          prefHeight="25.0" prefWidth="590.0" styleClass="cell-style" />
                       </children>
                     </Pane>
                     <Pane layoutX="70.0" layoutY="165.0" prefWidth="710.0">
                       <children>
-                        <Button fx:id="addRowButton" layoutX="685.0" layoutY="15.0" mnemonicParsing="false" onAction="#addRow" prefHeight="35.0" prefWidth="25.0" text="+" />
+
+
                         <VBox fx:id="rowsContainer" layoutX="15.0" layoutY="50.0" prefWidth="695.0">
                           <children>
                             <HBox fx:id="totalRow" alignment="CENTER_RIGHT" prefWidth="695.0">
                               <children>
-                                <TextField fx:id="totalAmount" prefHeight="50.0" prefWidth="80.0">
+                                <TextField fx:id="totalAmount" alignment="CENTER" editable="false"
+                                  focusTraversable="false" prefHeight="50.0" prefWidth="80.0"
+                                  styleClass="cell-total">
                                   <HBox.margin>
                                     <Insets right="25.0" />
                                   </HBox.margin>
@@ -69,10 +106,30 @@
                             </HBox>
                           </children>
                         </VBox>
-                        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="605.0" layoutY="15.0" prefHeight="35.0" prefWidth="80.0" text="TOTAL" textAlignment="CENTER" />
-                        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="525.0" layoutY="15.0" prefHeight="35.0" prefWidth="80.0" text="P. UNITARIO" textAlignment="CENTER" />
-                        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="445.0" layoutY="15.0" prefHeight="35.0" prefWidth="80.0" text="CANTIDAD" textAlignment="CENTER" />
-                        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="15.0" layoutY="15.0" prefHeight="35.0" prefWidth="430.0" text="DESCRIPCIÓN" textAlignment="CENTER" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="605.0"
+                          layoutY="15.0" prefHeight="35.0" prefWidth="80.0" text="TOTAL"
+                          textAlignment="CENTER" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="525.0"
+                          layoutY="15.0" prefHeight="35.0" prefWidth="80.0" text="P. UNITARIO"
+                          textAlignment="CENTER" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="445.0"
+                          layoutY="15.0" prefHeight="35.0" prefWidth="80.0" text="CANTIDAD"
+                          textAlignment="CENTER" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="15.0"
+                          layoutY="15.0" prefHeight="35.0" prefWidth="430.0" text="DESCRIPCIÓN"
+                          textAlignment="CENTER" />
+                        <Button fx:id="addRowButton" contentDisplay="CENTER" layoutX="15.0"
+                          layoutY="15.0" mnemonicParsing="false" onAction="#addRow"
+                          prefHeight="35.0" prefWidth="35.0" styleClass="add-row" textFill="WHITE">
+                          <graphic>
+                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true"
+                              preserveRatio="true">
+                              <image>
+                                <Image url="@../../../imagenes/add-row.png" />
+                              </image>
+                            </ImageView>
+                          </graphic>
+                        </Button>
                       </children>
                     </Pane>
                   </children>
@@ -80,7 +137,14 @@
                 <Pane prefWidth="840.0">
                   <children>
                     <Label layoutX="365.0" layoutY="27.0" text="IMAGENES" />
-                    <Button fx:id="addImageRowButton" layoutX="441.0" layoutY="18.0" mnemonicParsing="false" onAction="#addImageRow" prefHeight="35.0" prefWidth="35.0" text="+" />
+                    <Button fx:id="addImageRowButton" contentDisplay="CENTER" ellipsisString=""
+                      graphicTextGap="0.0" layoutX="441.0" layoutY="18.0" mnemonicParsing="false"
+                      onAction="#addImageRow" prefHeight="35.0" prefWidth="35.0"
+                      styleClass="add-row" text="+" textAlignment="CENTER" textFill="WHITE">
+                      <font>
+                        <Font name="System Bold" size="16.0" />
+                      </font>
+                    </Button>
                     <VBox fx:id="imagesContainer" layoutX="220.0" layoutY="70.0" prefWidth="400.0" />
                   </children>
                 </Pane>

@@ -1,0 +1,122 @@
+.cell-style {
+  -fx-background-radius: 0;
+  -fx-border-radius: 0;
+}
+
+.cell-total {
+  -fx-border-radius: 0;
+  -fx-background-color: white;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-border-color: transparent;
+  -fx-border-width: 0;
+  -fx-focus-color: transparent;
+  -fx-faint-focus-color: transparent;
+  -fx-padding: 0;
+}
+
+.delete-button {
+  -fx-background-color: #eb3c3c;
+  -fx-background-radius: 0;
+  -fx-padding: 0;
+}
+
+.delete-button:pressed {
+  -fx-background-color: #fc2b2b;
+}
+
+.add-row {
+  -fx-background-color: #136295;
+  -fx-background-radius: 0;
+  -fx-border-radius: 0;
+}
+
+.add-row:pressed {
+  -fx-background-color: #107fc9;
+}
+
+.scroll-pane:focused {
+  -fx-focus-color: transparent;
+  -fx-faint-focus-color: transparent;
+}
+
+.scroll-bar:vertical {
+  -fx-background-color: #d3d3d3;
+}
+
+.scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button {
+  -fx-background-color: #a9a9a9;
+  -fx-background-radius: 0;
+}
+
+.scroll-bar:vertical .thumb {
+  -fx-background-color: #606060;
+  -fx-background-radius: 3;
+}
+
+.scroll-bar:horizontal {
+  -fx-background-color: #d3d3d3;
+}
+
+.scroll-bar:horizontal .increment-button,
+.scroll-bar:horizontal .decrement-button {
+  -fx-background-color: #a9a9a9;
+  -fx-background-radius: 0;
+}
+
+.scroll-bar:horizontal .thumb {
+  -fx-background-color: #606060;
+  -fx-background-radius: 3;
+}
+
+.img-number {
+  -fx-border-radius: 0;
+  -fx-background-color: white;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-border-color: transparent;
+  -fx-border-width: 0;
+  -fx-focus-color: transparent;
+  -fx-faint-focus-color: transparent;
+  -fx-alignment: center;
+}
+
+.img-select {
+  -fx-background-radius: 0;
+  -fx-border-radius: 0;
+}
+
+.img-delete {
+  -fx-background-radius: 0;
+  -fx-border-radius: 0;
+  -fx-background-color: #eb3c3c;
+  -fx-text-fill: white;
+}
+
+.img-delete:pressed {
+  -fx-background-color: #fc2b2b;
+}
+
+.img-title {
+  -fx-background-radius: 0;
+  -fx-border-radius: 0;
+}
+
+.nav-item {
+  -fx-background-color: #1b6da3;
+  -fx-border-radius: 0;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-focus-color: transparent;
+  -fx-faint-focus-color: transparent;
+  -fx-alignment: center;
+}
+
+.nav-item:hover {
+  -fx-background-color: #136295;
+}
+
+.nav-item:pressed {
+  -fx-background-color: #107fc9;
+}

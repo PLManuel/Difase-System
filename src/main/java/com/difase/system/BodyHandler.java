@@ -31,7 +31,7 @@ public class BodyHandler {
   public static void addBody(Document document, String sres, String atencion, String contacto, String referencia,
       List<Map<String, Object>> detallesFilas, String totalGeneral) throws IOException {
     PdfFont customFont = loadFont();
-    Table table = new Table(UnitValue.createPercentArray(new float[]{17, 2, 100}))
+    Table table = new Table(UnitValue.createPercentArray(new float[] { 17, 2, 100 }))
         .setWidth(UnitValue.createPercentValue(100))
         .setMarginTop(-5)
         .setPadding(0);
@@ -80,23 +80,16 @@ public class BodyHandler {
 
   }
 
-private static PdfFont loadFont() throws IOException {
-  // Cargar la fuente desde el archivo dentro de resources usando InputStream
-  try (InputStream fontStream = BodyHandler.class.getResourceAsStream(FONT_PATH)) {
-    if (fontStream == null) {
-      throw new IOException("No se pudo encontrar el archivo de fuente en la ruta: " + FONT_PATH);
+  private static PdfFont loadFont() throws IOException {
+    try (InputStream fontStream = BodyHandler.class.getResourceAsStream(FONT_PATH)) {
+      if (fontStream == null) {
+        throw new IOException("No se pudo encontrar el archivo de fuente en la ruta: " + FONT_PATH);
+      }
+      byte[] fontBytes = convertInputStreamToByteArray(fontStream);
+      FontProgram fontProgram = FontProgramFactory.createFont(fontBytes);
+      return PdfFontFactory.createFont(fontProgram);
     }
-    
-    // Convertir el InputStream a un byte[]
-    byte[] fontBytes = convertInputStreamToByteArray(fontStream);
-    
-    // Crear el FontProgram a partir del byte[]
-    FontProgram fontProgram = FontProgramFactory.createFont(fontBytes);
-    
-    // Crear el PdfFont usando el FontProgram
-    return PdfFontFactory.createFont(fontProgram);
   }
-}
 
   private static byte[] convertInputStreamToByteArray(InputStream inputStream) throws IOException {
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -111,31 +104,26 @@ private static PdfFont loadFont() throws IOException {
   }
 
   private static void addRow(Table table, String label, String value, PdfFont customFont) {
-    // Define the desired height for the cells
-    float cellHeight = 15f; // Adjust this value to set the desired height
-
-    // Columna del título en negrita
+    float cellHeight = 15f;
     Cell labelCell = new Cell()
         .add(new Paragraph(label).setFont(customFont).setFontSize(FONT_SIZE))
         .setPadding(0)
         .setBorder(null)
-        .setHeight(cellHeight); // Set cell height
+        .setHeight(cellHeight);
     table.addCell(labelCell).setMargin(0).setPadding(0);
 
-    // Columna para el ":"
     Cell colonCell = new Cell()
         .add(new Paragraph(":").setFont(customFont).setFontSize(FONT_SIZE))
         .setPadding(0)
         .setBorder(null)
-        .setHeight(cellHeight); // Set cell height
+        .setHeight(cellHeight);
     table.addCell(colonCell).setMargin(0).setPadding(0);
 
-    // Columna para el valor
     Cell valueCell = new Cell()
         .add(new Paragraph(value).setFont(customFont).setFontSize(FONT_SIZE))
         .setPadding(0)
         .setBorder(null)
-        .setHeight(cellHeight); // Set cell height
+        .setHeight(cellHeight);
     table.addCell(valueCell).setMargin(0).setPadding(0);
   }
 
@@ -155,7 +143,7 @@ private static PdfFont loadFont() throws IOException {
   private static void addDetailsTable(Document document, List<Map<String, Object>> detallesFilas,
       String totalGeneral,
       PdfFont customFont) {
-    Table detailsTable = new Table(UnitValue.createPercentArray(new float[]{11, 2, 2, 2}))
+    Table detailsTable = new Table(UnitValue.createPercentArray(new float[] { 11, 2, 2, 2 }))
         .setWidth(UnitValue.createPercentValue(100))
         .setMarginTop(10);
 
@@ -195,7 +183,7 @@ private static PdfFont loadFont() throws IOException {
   }
 
   private static void addConditionsTable(Document document, PdfFont customFont) {
-    Table conditionsTable = new Table(UnitValue.createPercentArray(new float[]{5, 5}))
+    Table conditionsTable = new Table(UnitValue.createPercentArray(new float[] { 5, 5 }))
         .setWidth(UnitValue.createPercentValue(100)).setMarginLeft(5).setPadding(0)
         .setBorder(null);
 
@@ -224,13 +212,9 @@ private static PdfFont loadFont() throws IOException {
   }
 
   private static void addFooter(Document document, PdfFont customFont) {
-    // Crear tabla contenedora con ancho fijo
     Table footerTable = new Table(1).setMarginTop(15).setPadding(0).setFontColor(TEXT_COLOR)
-        .setWidth(UnitValue.createPercentValue(28)) // Establece el ancho al 70% del documento
-        .setHorizontalAlignment(HorizontalAlignment.LEFT); // Centrar el contenedor en el
-    // documento
-
-    // ATTE.
+        .setWidth(UnitValue.createPercentValue(28))
+        .setHorizontalAlignment(HorizontalAlignment.LEFT);
     Paragraph atteParagraph = new Paragraph("ATTE.").setFontColor(new DeviceRgb(0, 0, 0))
         .setFont(customFont)
         .setFontSize(9)
@@ -238,33 +222,25 @@ private static PdfFont loadFont() throws IOException {
         .setMarginBottom(5);
     footerTable.addCell(new Cell().add(atteParagraph).setMargin(0).setPadding(0)
         .setBorder(null));
-
-    // Nombre del asesor
     Paragraph nameParagraph = new Paragraph("Milder Lume Sacsa")
         .setFont(customFont).setBold()
         .setFontSize(9)
         .setTextAlignment(TextAlignment.CENTER).setMargin(0).setPadding(0);
     footerTable.addCell(new Cell().add(nameParagraph).setMargin(0).setPadding(0)
         .setBorder(null));
-
-    // Cargo
     Paragraph positionParagraph = new Paragraph("ASESOR COMERCIAL")
         .setFont(customFont)
         .setFontSize(9)
         .setTextAlignment(TextAlignment.CENTER).setMargin(0).setPadding(0);
     footerTable.addCell(new Cell().add(positionParagraph).setMargin(0).setPadding(0)
         .setBorder(null));
-
-    // Nombre de la empresa
     Paragraph companyParagraph = new Paragraph("DIFASE MACHINERY SAC")
         .setFont(customFont).setBold()
         .setFontSize(9)
         .setTextAlignment(TextAlignment.CENTER).setMargin(0).setPadding(0).setUnderline();
     footerTable.addCell(new Cell().add(companyParagraph).setMargin(0).setPadding(0)
         .setBorder(null));
-
-    // Teléfono
-    Table phoneTable = new Table(new float[]{1, 1})
+    Table phoneTable = new Table(new float[] { 1, 1 })
         .setWidth(UnitValue.createPercentValue(100))
         .setBorder(null);
     phoneTable.addCell(
@@ -278,9 +254,7 @@ private static PdfFont loadFont() throws IOException {
         .setBorder(null));
     footerTable.addCell(new Cell().add(phoneTable).setMargin(0).setPadding(0)
         .setBorder(null));
-
-    // Web con Link
-    Table webTable = new Table(new float[]{1, 1})
+    Table webTable = new Table(new float[] { 1, 1 })
         .setWidth(UnitValue.createPercentValue(100)).setMargin(0).setPadding(0)
         .setBorder(null);
     webTable.addCell(
@@ -297,7 +271,7 @@ private static PdfFont loadFont() throws IOException {
     footerTable.addCell(new Cell().add(webTable).setMargin(0).setPadding(0)
         .setBorder(null));
 
-    Table emailTable = new Table(new float[]{1, 3})
+    Table emailTable = new Table(new float[] { 1, 3 })
         .setWidth(UnitValue.createPercentValue(100)).setMargin(0).setPadding(0)
         .setBorder(null);
     emailTable.addCell(

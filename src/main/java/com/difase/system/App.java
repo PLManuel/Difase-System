@@ -13,6 +13,7 @@ public class App extends Application {
   public void start(Stage stage) throws IOException {
     Parent root = FXMLLoader.load(getClass().getResource("/com/difase/system/Layout.fxml"));
     Scene scene = new Scene(root);
+    scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
     stage.setTitle("Difase - Inicio de Sesión");
     stage.setScene(scene);
     stage.setResizable(false);

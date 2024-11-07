@@ -19,13 +19,13 @@ import java.util.Locale;
 
 public class HeaderHandler implements IEventHandler {
 
-  private static final String LOGO_PATH = "/imagenes/logo.png"; // Ruta ajustada a resources/imagenes
-  private final PdfFont font;  // Fuente que se pasará al header
+  private static final String LOGO_PATH = "/imagenes/logo.png";
+  private final PdfFont font;
   private final String cotizacion;
 
   public HeaderHandler(String cotizacion, PdfFont font) {
     this.cotizacion = cotizacion;
-    this.font = font; // Reutilizamos la fuente
+    this.font = font;
   }
 
   @Override
@@ -38,11 +38,10 @@ public class HeaderHandler implements IEventHandler {
     ImageData imageData = null;
 
     try {
-      // Cargar la imagen del logo desde los recursos
-      InputStream logoStream = getClass().getResourceAsStream(LOGO_PATH);  // Utiliza getResourceAsStream
+      InputStream logoStream = getClass().getResourceAsStream(LOGO_PATH);
       if (logoStream != null) {
-        byte[] logoBytes = logoStream.readAllBytes();  // Convertir InputStream a byte[]
-        imageData = ImageDataFactory.create(logoBytes);  // Crear ImageData a partir del byte[]
+        byte[] logoBytes = logoStream.readAllBytes();
+        imageData = ImageDataFactory.create(logoBytes);
       } else {
         throw new MalformedURLException("No se pudo cargar el logo desde la ruta: " + LOGO_PATH);
       }
@@ -55,12 +54,11 @@ public class HeaderHandler implements IEventHandler {
     float imageY = pdfDoc.getDefaultPageSize().getTop() - 84;
     image.setFixedPosition(imageX, imageY);
 
-    // Añadir la imagen al canvas
     try (Canvas canvas = new Canvas(pdfCanvas, pdfDoc.getDefaultPageSize())) {
       canvas.add(image);
     }
 
-    pdfCanvas.setFontAndSize(font, 9);  // Usar la fuente pasada al HeaderHandler
+    pdfCanvas.setFontAndSize(font, 9);
 
     String fechaActual = obtenerFechaActualFormato();
     String linea1 = "Lima  " + fechaActual;

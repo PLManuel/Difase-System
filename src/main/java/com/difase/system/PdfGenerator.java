@@ -85,19 +85,12 @@ public class PdfGenerator {
   }
 
   private static PdfFont loadFont() throws IOException {
-    // Cargar la fuente desde el archivo dentro de resources usando InputStream
     try (InputStream fontStream = BodyHandler.class.getResourceAsStream(FONT_PATH)) {
       if (fontStream == null) {
         throw new IOException("No se pudo encontrar el archivo de fuente en la ruta: " + FONT_PATH);
       }
-
-      // Convertir el InputStream a un byte[]
       byte[] fontBytes = convertInputStreamToByteArray(fontStream);
-
-      // Crear el FontProgram a partir del byte[]
       FontProgram fontProgram = FontProgramFactory.createFont(fontBytes);
-
-      // Crear el PdfFont usando el FontProgram
       return PdfFontFactory.createFont(fontProgram);
     }
   }

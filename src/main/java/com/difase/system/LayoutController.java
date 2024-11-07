@@ -61,7 +61,7 @@ public class LayoutController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle rb) {
     cargarNumeroCotizacion();
-    mostrarCodigoCotizacion(); // Mostrar el código de cotización en la interfaz
+    mostrarCodigoCotizacion();
     addRow();
     addImageRow();
     updateTotal();
@@ -81,13 +81,16 @@ public class LayoutController implements Initializable {
     TextField imageNumberField = new TextField(String.valueOf(imagesContainer.getChildren().size() + 1));
     imageNumberField.setPrefWidth(35);
     imageNumberField.setEditable(false);
+    imageNumberField.getStyleClass().add("img-number");
 
-    Button chooseImageButton = new Button("Seleccionar");
-    chooseImageButton.setPrefWidth(265);
     ImageView previewImageView = new ImageView();
     previewImageView.setFitWidth(400);
     previewImageView.setPreserveRatio(true);
+    previewImageView.getStyleClass().add("img-prev");
 
+    Button chooseImageButton = new Button("Seleccionar");
+    chooseImageButton.setPrefWidth(265);
+    chooseImageButton.getStyleClass().add("img-select");
     chooseImageButton.setOnAction(_ -> {
       FileChooser fileChooser = new FileChooser();
       fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg"));
@@ -101,15 +104,17 @@ public class LayoutController implements Initializable {
       }
     });
 
-    TextField imageTitleField = new TextField();
-    imageTitleField.setPrefWidth(400);
-
     Button deleteImageButton = new Button("Eliminar");
     deleteImageButton.setPrefWidth(100);
+    deleteImageButton.getStyleClass().add("img-delete");
     deleteImageButton.setOnAction(_ -> {
       imagesContainer.getChildren().remove(newImageRow);
       updateImageNumbers();
     });
+
+    TextField imageTitleField = new TextField();
+    imageTitleField.setPrefWidth(400);
+    imageTitleField.getStyleClass().add("img-title");
 
     newImageRow.getChildren().addAll(
         new HBox(imageNumberField, chooseImageButton, deleteImageButton),
@@ -220,28 +225,43 @@ public class LayoutController implements Initializable {
     newDescription.setPrefWidth(430);
     newDescription.setMaxHeight(Double.MAX_VALUE);
     newDescription.setWrapText(true);
+    newDescription.getStyleClass().add("cell-style");
     setupDynamicHeight(newDescription);
+
     TextField newQuantity = new TextField();
     newQuantity.setPrefWidth(80);
     newQuantity.setMaxHeight(Double.MAX_VALUE);
+    newQuantity.getStyleClass().add("cell-style");
     newQuantity.addEventHandler(KeyEvent.KEY_TYPED, event -> SoloNumerosEnteros(event, newQuantity));
+
     TextField newUnitPrice = new TextField();
     newUnitPrice.setPrefWidth(80);
     newUnitPrice.setMaxHeight(Double.MAX_VALUE);
+    newUnitPrice.getStyleClass().add("cell-style");
     newUnitPrice.addEventHandler(KeyEvent.KEY_TYPED, event -> SoloNumerosConDecimales(event));
+
     TextField newTotal = new TextField();
     newTotal.setPrefWidth(80);
     newTotal.setMaxHeight(Double.MAX_VALUE);
+    newTotal.getStyleClass().add("cell-style");
     newTotal.addEventHandler(KeyEvent.KEY_TYPED, event -> SoloNumerosConDecimales(event));
     newQuantity.textProperty().addListener((_, _, _) -> updateRowTotal(newQuantity, newUnitPrice, newTotal));
     newUnitPrice.textProperty().addListener((_, _, _) -> updateRowTotal(newQuantity, newUnitPrice, newTotal));
-    Button deleteButton = new Button("");
+
+    Button deleteButton = new Button();
     deleteButton.setPrefWidth(25);
     deleteButton.setMaxHeight(Double.MAX_VALUE);
+    deleteButton.getStyleClass().add("delete-button");
+    Image trashImage = new Image(getClass().getResourceAsStream("/imagenes/delete.png"));
+    ImageView trashImageView = new ImageView(trashImage);
+    trashImageView.setFitWidth(20);
+    trashImageView.setFitHeight(20);
+    deleteButton.setGraphic(trashImageView);
     deleteButton.setOnAction(_ -> {
       rowsContainer.getChildren().remove(newRow);
       updateTotal();
     });
+
     newRow.getChildren().addAll(newDescription, newQuantity, newUnitPrice, newTotal, deleteButton);
     rowsContainer.getChildren().add(rowsContainer.getChildren().size() - 1, newRow);
 
