@@ -14,7 +14,7 @@ public class App extends Application {
     Parent root = FXMLLoader.load(getClass().getResource("/com/difase/system/Layout.fxml"));
     Scene scene = new Scene(root);
     scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
-    stage.setTitle("Difase - Inicio de Sesión");
+    stage.setTitle("Difase Machinery");
     stage.setScene(scene);
     stage.setResizable(false);
     stage.show();
