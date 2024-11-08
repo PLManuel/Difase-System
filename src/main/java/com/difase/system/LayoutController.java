@@ -32,6 +32,9 @@ public class LayoutController implements Initializable {
   private int cotizacionNumero;
 
   @FXML
+  private TextField pdfNameField;
+
+  @FXML
   private Label CodigoCOT;
 
   @FXML
@@ -271,6 +274,7 @@ public class LayoutController implements Initializable {
   private void mostrarCodigoCotizacion() {
     String codigoCotizacion = generarCodigoCotizacion();
     CodigoCOT.setText(codigoCotizacion);
+    pdfNameField.setText(codigoCotizacion); // Asigna el nombre del PDF por defecto
   }
 
   @FXML
@@ -282,7 +286,7 @@ public class LayoutController implements Initializable {
     }
 
     String codigoCotizacion = generarCodigoCotizacion();
-    String nombreArchivoPdf = String.format("cotizacion-%d-%02d.pdf", cotizacionNumero, Year.now().getValue() % 100);
+    String nombreArchivoPdf = pdfNameField.getText() + ".pdf";
     String fullPath = pdfSavePath + File.separator + nombreArchivoPdf;
 
     String sres = sresField.getText();
@@ -345,6 +349,19 @@ public class LayoutController implements Initializable {
     cotizacionNumero++;
     guardarNumeroCotizacion();
     mostrarCodigoCotizacion();
+
+    sresField.clear();
+    atencionField.clear();
+    contactoField.clear();
+    referenciaField.clear();
+
+    rowsContainer.getChildren().removeIf(row -> row != totalRow);
+    addRow();
+
+    imagesContainer.getChildren().clear();
+    addImageRow();
+
+    updateTotal();
   }
 
   @FXML
