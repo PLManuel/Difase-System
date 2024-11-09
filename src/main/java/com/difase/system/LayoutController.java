@@ -278,7 +278,7 @@ public class LayoutController implements Initializable {
   }
 
   @FXML
-  private void handleGeneratePdf() {
+  private void handleGeneratePdf() throws IOException {
     String pdfSavePath = ConfigManager.getPdfSavePath();
     if (pdfSavePath == null) {
       System.out.println("No se seleccionó ninguna ruta de guardado. Operación cancelada.");
@@ -345,6 +345,9 @@ public class LayoutController implements Initializable {
         codigoCotizacion,
         detallesFilas,
         imagesData);
+    
+    File pdf = new File(fullPath);
+    Desktop.getDesktop().open(pdf);
 
     cotizacionNumero++;
     guardarNumeroCotizacion();
